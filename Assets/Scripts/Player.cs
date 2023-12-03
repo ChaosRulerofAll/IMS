@@ -24,6 +24,8 @@ public class Player : MonoBehaviour
 
     [SerializeField] private GameObject player;
 
+    int DoubleJump;
+
     //A boolean to check facing direction of player. Will be used for sprite
     private bool isFacingRight;
 
@@ -61,6 +63,11 @@ public class Player : MonoBehaviour
 
         //Debugging Code
         UI.text = "Melons: " + melonCount.ToString() + "/" + maxMelons.ToString();
+
+        if (isGrounded())
+        {
+            DoubleJump = 1;
+        }
     }
 
     private void Update()
@@ -89,6 +96,13 @@ public class Player : MonoBehaviour
         if ((Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.UpArrow) || Input.GetKeyUp(KeyCode.Space)))
         {
             Physics2D.IgnoreLayerCollision(0, 9, false);
+        }
+        //Double Jump
+        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Space)) && !isGrounded() && DoubleJump > 0)
+        {
+            body.AddForce(jumpPower * transform.up, ForceMode2D.Force);
+            Physics2D.IgnoreLayerCollision(0, 9, true);
+            DoubleJump--;
         }
 
     }
@@ -127,5 +141,15 @@ public class Player : MonoBehaviour
         {
             die();
         }
+
     }
+    //private void OnCollisionStay(Collision collision)
+    //{
+    //    if (collision.gameObject.tag == "Ground" && !isGrounded() && (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Space)))
+    //    {
+    //        body.AddForce(jumpPower * transform.up, ForceMode2D.Force);
+    //        body.AddForce(jumpPower * transform.forward, ForceMode2D.Force);
+    //        Debug.Log("Wall Jump");
+    //    }
+    //}
 }
